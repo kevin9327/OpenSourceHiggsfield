@@ -1,0 +1,19 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# Node / Playwright / Temp
+node_modules/
+.env
+.env.local
+*.log
+
+# Reference Video Raw Captures & Per-Run Job Scratch Outputs
+ref_videos/
+public/outputs/_demo_audio_tmp/
+public/outputs/*_ohf-*

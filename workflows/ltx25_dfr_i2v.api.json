@@ -1,0 +1,208 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 22B Diffusion Model"
+    }
+  },
+  "2": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "gemma_4_12B_it_fp8_scaled.safetensors",
+      "type": "ltxv"
+    },
+    "_meta": {
+      "title": "Load Gemma-4 12B Text Encoder"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ltx-2.5-vae.safetensors"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 Video VAE"
+    }
+  },
+  "4": {
+    "class_type": "LTXVAudioVAELoader",
+    "inputs": {
+      "ckpt_name": "ltx-2.5-audio-vae.safetensors"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 Audio VAE"
+    }
+  },
+  "5": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "conservatory_python_shot.png"
+    },
+    "_meta": {
+      "title": "Reference Anchor Frame"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A man with a python over his shoulders stands in a glass conservatory at night. Shot on ARRI Alexa 65 Large Format, Panavision 50mm f/2.8 Anamorphic lens, heroic low-angle framing, neon magenta and cyan lighting, Kodak Vision3 500T film stock, Hollywood teal and orange grade.",
+      "clip": ["2", 0]
+    },
+    "_meta": {
+      "title": "Positive Director Prompt"
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "blurry, low quality, distorted anatomy, watermark, oversaturated, jitter, static frame, compression artifacts",
+      "clip": ["2", 0]
+    },
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "8": {
+    "class_type": "OpenHiggsfieldCameraRig",
+    "inputs": {
+      "rig_preset": "custom_orbit",
+      "frame_count": 97,
+      "fps": 24.0,
+      "start_azimuth_deg": 25.0,
+      "start_elevation_deg": 8.0,
+      "end_azimuth_deg": -15.0,
+      "end_elevation_deg": 0.0,
+      "start_distance": 1.0,
+      "end_distance": 0.88,
+      "fov_deg": 50.0,
+      "keyframes_json": ""
+    },
+    "_meta": {
+      "title": "OpenHiggsfield 6-DOF Camera Rig"
+    }
+  },
+  "9": {
+    "class_type": "LTXVSparseTrackEditor",
+    "inputs": {
+      "tracks_json": ["8", 1],
+      "width": 1280,
+      "height": 720,
+      "num_frames": 97
+    },
+    "_meta": {
+      "title": "LTX-2.5 Sparse 3D Point Track Conditioning"
+    }
+  },
+  "10": {
+    "class_type": "LTXVAddGeneratedKeyframes",
+    "inputs": {
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "vae": ["3", 0],
+      "image": ["5", 0],
+      "sparse_tracks": ["9", 0],
+      "width": 640,
+      "height": 360,
+      "length": 97,
+      "frame_rate": 24.0,
+      "strength": 0.92
+    },
+    "_meta": {
+      "title": "Stage 1: DFR Half-Resolution Anchor Conditioning"
+    }
+  },
+  "11": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["10", 0],
+      "negative": ["10", 1],
+      "latent_image": ["10", 2],
+      "seed": 4202026,
+      "steps": 20,
+      "cfg": 3.5,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "ltxv_shifted"
+    },
+    "_meta": {
+      "title": "Stage 1: DFR Half-Res Trajectory Generation"
+    }
+  },
+  "12": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["1", 0],
+      "lora_name": "ltx-2.5-22b-ic-lora-pixel-spatial-upscaler-x2-1.0.safetensors",
+      "strength_model": 1.0
+    },
+    "_meta": {
+      "title": "Stage 2: LTX-2.5 IC-LoRA Pixel Spatial Upscaler x2"
+    }
+  },
+  "13": {
+    "class_type": "LTXVLatentUpsampler",
+    "inputs": {
+      "samples": ["11", 0],
+      "upscale_model": "ltx-2.5-latent-spatial-upscaler-x2.safetensors",
+      "vae": ["3", 0]
+    },
+    "_meta": {
+      "title": "Stage 2: Latent 2x Spatial Upsample (640x360 -> 1280x720)"
+    }
+  },
+  "14": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "model": ["12", 0],
+      "positive": ["10", 0],
+      "negative": ["10", 1],
+      "latent_image": ["13", 0],
+      "seed": 4202027,
+      "steps": 8,
+      "cfg": 2.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 0.42
+    },
+    "_meta": {
+      "title": "Stage 3: Full-Res DFR High-Frequency Detail & Audio Refinement"
+    }
+  },
+  "15": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["14", 0],
+      "vae": ["3", 0]
+    },
+    "_meta": {
+      "title": "Decode LTX-2.5 Video Frames"
+    }
+  },
+  "16": {
+    "class_type": "LTXVAudioVAEDecode",
+    "inputs": {
+      "samples": ["14", 0],
+      "audio_vae": ["4", 0]
+    },
+    "_meta": {
+      "title": "Decode Synchronized LTX-2.5 Binaural Audio"
+    }
+  },
+  "17": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["15", 0],
+      "audio": ["16", 0],
+      "filename_prefix": "OpenHiggsfield_LTX25_DFR",
+      "fps": 24.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save Final Directed Video (MP4)"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+[project]
+name = "comfyui-openhiggsfield-nodes"
+description = "Open-source 6-DOF 3D Camera Rig, Depth-Warped Video Re-Shoot, Physically-Based Relighting/Film Grading, OpenJutsu VFX, and LTX-2.5 / FLUX.3 Trajectory Control nodes for ComfyUI."
+version = "1.0.0"
+license = { file = "../../LICENSE" }
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.24.0",
+    "opencv-python-headless>=4.8.0",
+    "Pillow>=10.0.0",
+]
+
+[project.urls]
+Repository = "https://github.com/OpenSourceHiggsfield/OpenSourceHiggsfield"
+Documentation = "https://github.com/OpenSourceHiggsfield/OpenSourceHiggsfield#readme"
+"Bug Tracker" = "https://github.com/OpenSourceHiggsfield/OpenSourceHiggsfield/issues"
+
+[tool.comfy]
+PublisherId = "opensourcehiggsfield"
+DisplayName = "ComfyUI OpenHiggsfield Director Nodes"
+Icon = "https://media.comfy.org/website/open-source-higgsfield/Open_Source_Higgsfield_Launch_Video_v06_poster.jpg"

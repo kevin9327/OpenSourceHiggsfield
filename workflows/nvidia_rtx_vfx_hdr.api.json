@@ -1,0 +1,62 @@
+{
+  "1": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "OpenHiggsfield_Reshoot_Result.mp4",
+      "force_rate": 24,
+      "frame_load_cap": 120
+    },
+    "_meta": {
+      "title": "Load Base Generated Video (720p/768p @ 24fps)"
+    }
+  },
+  "2": {
+    "class_type": "RTXVideoSuperResolution",
+    "inputs": {
+      "images": ["1", 0],
+      "scale_factor": 2,
+      "quality_preset": "ULTRA",
+      "artifact_reduction": true
+    },
+    "_meta": {
+      "title": "NVIDIA RTX Video Super Resolution (2x Tensor Core Upscale to 4K/1440p)"
+    }
+  },
+  "3": {
+    "class_type": "RTXVideoFrameGeneration",
+    "inputs": {
+      "images": ["2", 0],
+      "multiplier": 2,
+      "optical_flow_precision": "FP16"
+    },
+    "_meta": {
+      "title": "NVIDIA RTX Optical Flow Frame Generation (24fps -> 48fps Cinema Smooth)"
+    }
+  },
+  "4": {
+    "class_type": "RTXTrueHDR",
+    "inputs": {
+      "images": ["3", 0],
+      "contrast": 115,
+      "saturation": 108,
+      "middle_grey": 50,
+      "max_luminance_nits": 1000
+    },
+    "_meta": {
+      "title": "NVIDIA RTX TrueHDR 10-bit Mastering"
+    }
+  },
+  "5": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["4", 0],
+      "audio": ["1", 1],
+      "filename_prefix": "OpenHiggsfield_RTX5080_Mastered_4K",
+      "fps": 48.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save RTX Hardware-Mastered Cinema Output"
+    }
+  }
+}

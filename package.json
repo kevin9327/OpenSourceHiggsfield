@@ -1,0 +1,27 @@
+{
+  "name": "open-source-higgsfield",
+  "version": "1.0.0",
+  "description": "Open-Source Higgsfield 3-in-1 AI Cinema Studio (Cinematic Studio, 3D Video Re-Shoot, OpenJutsu) powered by ComfyUI, LTX-2.5 22B, FLUX.3, and @comfyorg/comfy-sdk v0.5.0.",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "comfyui",
+    "opensourcehiggsfield",
+    "comfy-sdk",
+    "comfy-api-proxy",
+    "ltx-2.5",
+    "flux-3",
+    "minimax-h3",
+    "3d-camera-control",
+    "video-reshoot",
+    "relighting"
+  ],
+  "scripts": {
+    "start": "python -m uvicorn backend.server:app --host 127.0.0.1 --port 8090",
+    "dev": "python -m uvicorn backend.server:app --host 127.0.0.1 --port 8090 --reload",
+    "proxy": "comfy-api-proxy start --comfy-url http://127.0.0.1:8188 --port 8189"
+  },
+  "dependencies": {
+    "@comfyorg/comfy-sdk": "^0.5.0"
+  }
+}

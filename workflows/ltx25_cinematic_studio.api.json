@@ -1,0 +1,138 @@
+{
+  "1": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "flux3-image-klein-int8-convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "_meta": {
+      "title": "Load FLUX.3 Image Klein (Open-Weights Cinema Generator)"
+    }
+  },
+  "2": {
+    "class_type": "DualCLIPLoader",
+    "inputs": {
+      "clip_name1": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux"
+    },
+    "_meta": {
+      "title": "Load FLUX Text Encoders"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "_meta": {
+      "title": "Load FLUX 16-Channel VAE"
+    }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "A man with a python over his shoulders stands in a glass conservatory at night. Shot on ARRI Alexa 65 Large Format, Panavision C-Series 50mm f/2.8 2x Anamorphic lens, heroic low-angle framing, neon nocturnal lighting, Kodak Vision3 500T film stock, teal and orange color grade.",
+      "clip": ["2", 0]
+    },
+    "_meta": {
+      "title": "Compiled Cinematic Studio Prompt"
+    }
+  },
+  "5": {
+    "class_type": "EmptySD3LatentImage",
+    "inputs": {
+      "width": 1920,
+      "height": 1080,
+      "batch_size": 1
+    },
+    "_meta": {
+      "title": "2K 16:9 Cinema Canvas"
+    }
+  },
+  "6": {
+    "class_type": "KSampler",
+    "inputs": {
+      "model": ["1", 0],
+      "positive": ["4", 0],
+      "negative": ["4", 0],
+      "latent_image": ["5", 0],
+      "seed": 77889900,
+      "steps": 24,
+      "cfg": 1.0,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0
+    },
+    "_meta": {
+      "title": "Sample FLUX.3 Base Cinema Shot"
+    }
+  },
+  "7": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["6", 0],
+      "vae": ["3", 0]
+    },
+    "_meta": {
+      "title": "Decode FLUX.3 Shot"
+    }
+  },
+  "8": {
+    "class_type": "OpenHiggsfieldRelightGrade",
+    "inputs": {
+      "images": ["7", 0],
+      "camera_type": "large_format_anamorphic",
+      "framing": "low_angle",
+      "light_preset": "neon",
+      "film_stock": "tungsten_500t",
+      "color_grade": "teal_and_orange",
+      "relight_intensity": 0.78,
+      "grade_strength": 0.85
+    },
+    "_meta": {
+      "title": "OpenHiggsfield 3D Normal Relight, Film Stock & LUT Grade"
+    }
+  },
+  "9": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 22B Video Engine"
+    }
+  },
+  "10": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["9", 0],
+      "lora_name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+      "strength_model": 0.90
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 IC-LoRA Layout-to-Render"
+    }
+  },
+  "11": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["8", 0],
+      "filename_prefix": "OpenHiggsfield_CinematicStudio_2K"
+    },
+    "_meta": {
+      "title": "Save Directed 2K Cinema Shot"
+    }
+  },
+  "12": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": ["8", 1],
+      "filename_prefix": "OpenHiggsfield_CinematicStudio_NormalLightMap"
+    },
+    "_meta": {
+      "title": "Save 3D Surface Normal & Light Pass"
+    }
+  }
+}

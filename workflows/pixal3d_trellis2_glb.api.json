@@ -1,0 +1,82 @@
+{
+  "1": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "character_grandma.png"
+    },
+    "_meta": {
+      "title": "Load Hero Prop / Character Image for 3D Reconstruction"
+    }
+  },
+  "2": {
+    "class_type": "LoadTrellis2Pipeline",
+    "inputs": {
+      "model_name": "TRELLIS-image-large-fp16.safetensors",
+      "dinov2_backbone": "dinov2_vitl14_reg.safetensors"
+    },
+    "_meta": {
+      "title": "Load Open-Weights Pixal3D / TRELLIS-2 Sparse 3D Latent Pipeline"
+    }
+  },
+  "3": {
+    "class_type": "Trellis2RemoveBackground",
+    "inputs": {
+      "image": ["1", 0],
+      "alpha_threshold": 0.5
+    },
+    "_meta": {
+      "title": "Isolate Foreground Subject Alpha"
+    }
+  },
+  "4": {
+    "class_type": "Trellis2ImageToSLat",
+    "inputs": {
+      "pipeline": ["2", 0],
+      "image": ["3", 0],
+      "seed": 42,
+      "sparse_structure_steps": 12,
+      "slat_steps": 12,
+      "cfg_strength": 7.5
+    },
+    "_meta": {
+      "title": "Sample Structured 3D Voxel & Gaussian Latents (SLat)"
+    }
+  },
+  "5": {
+    "class_type": "Trellis2SLatToGLB",
+    "inputs": {
+      "slat": ["4", 0],
+      "simplify_ratio": 0.92,
+      "texture_size": 2048,
+      "bake_pbr_maps": true,
+      "filename_prefix": "OpenHiggsfield_SetAsset_3D"
+    },
+    "_meta": {
+      "title": "Export Textured PBR Mesh (.glb) for 3D Virtual Set"
+    }
+  },
+  "6": {
+    "class_type": "Trellis2RenderTurntable",
+    "inputs": {
+      "slat": ["4", 0],
+      "num_frames": 48,
+      "elevation_deg": 12.0,
+      "resolution": 768
+    },
+    "_meta": {
+      "title": "Render 360° Turntable Reference Pass for LTX-2.5 Camera Rig"
+    }
+  },
+  "7": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["6", 0],
+      "filename_prefix": "OpenHiggsfield_3D_Turntable",
+      "fps": 24.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save 3D Turntable Video"
+    }
+  }
+}

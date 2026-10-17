@@ -1,0 +1,81 @@
+# Comfy Developer Platform Deployment Manifest (comfy-build.yaml)
+# OpenSourceHiggsfield (#OpenSourceHiggsfield) — 3-in-1 AI Cinema & Video Direction Studio
+schema_version: "1.0"
+name: "openhiggsfield-director-studio"
+version: "1.1.0"
+challenge: "#OpenSourceHiggsfield"
+license: "MIT"
+
+comfyui:
+  repo: "https://github.com/comfyanonymous/ComfyUI.git"
+  version: "v0.37.0"
+  commit: "2255709aa0"
+
+sdk:
+  comfy_sdk: "0.5.0"
+  comfy_api_proxy: "0.1.6"
+  default_execution_mode: "OPEN_WEIGHTS_LOCAL"
+
+hardware_target:
+  gpu_architecture: "NVIDIA Blackwell (RTX 5080 / RTX 5090)"
+  min_vram_mib: 16303
+  cuda_version: "13.4"
+  precision: "fp8_e4m3fn + fp16"
+
+custom_nodes:
+  - name: "comfyui_openhiggsfield_nodes"
+    path: "./custom_nodes/comfyui_openhiggsfield_nodes"
+    nodes:
+      - "OpenHiggsfieldCameraRig"
+      - "OpenHiggsfieldDepthReshoot"
+      - "OpenHiggsfieldRelightGrade"
+      - "OpenHiggsfieldJutsuVFX"
+      - "OpenHiggsfieldViralWipe"
+  - name: "ComfyUI-CrossViewWarp"
+    repo: "https://github.com/Comfy-Org/comfy-reshoot"
+    commit: "main"
+    binary_protocol: "CVGEO1\\0\\0"
+
+models:
+  - id: "LTX-2.5-22B"
+    filename: "ltx-2.5-22b-dev-fp8.safetensors"
+    directory: "models/checkpoints"
+    open_weights: true
+    components:
+      - "gemma_4_12B_it_fp8_scaled.safetensors"
+      - "ltx-2.5-vae.safetensors"
+      - "ltx-2.5-audio-vae.safetensors"
+      - "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors"
+      - "ltx-2.5-22b-ic-lora-ingredients-0.9.safetensors"
+      - "ltx-2.5-22b-ic-lora-alpha-gen-0.9.safetensors"
+      - "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors"
+      - "ltx-2.5-22b-ic-lora-pixel-spatial-upscaler-x2-1.0.safetensors"
+  - id: "FLUX.3-Klein"
+    filename: "flux3-image-klein-int8-convrot.safetensors"
+    directory: "models/unet"
+    open_weights: true
+  - id: "MoGe-2"
+    filename: "depth_anything_v3_vitl_fp16.safetensors"
+    alias: "moge2_vitl_fp16.safetensors"
+    directory: "models/depth"
+    open_weights: true
+  - id: "MiniMax-H3"
+    filename: "minimax_h3_open_weights_fp8.safetensors"
+    directory: "models/checkpoints"
+    open_weights: true
+  - id: "SAM-3"
+    filename: "sam3_vit_h_fp16.safetensors"
+    directory: "models/sams"
+    open_weights: true
+  - id: "TRELLIS-2"
+    filename: "TRELLIS-image-large-fp16.safetensors"
+    directory: "models/trellis2"
+    open_weights: true
+
+workflows:
+  - "workflows/ltx25_cinematic_studio.api.json"
+  - "workflows/ltx25_reshoot_depth_warp.api.json"
+  - "workflows/ltx25_openjutsu_swap.api.json"
+  - "workflows/ltx25_dfr_i2v.api.json"
+  - "workflows/pixal3d_trellis2_glb.api.json"
+  - "workflows/nvidia_rtx_vfx_hdr.api.json"
