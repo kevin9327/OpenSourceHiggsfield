@@ -1,0 +1,195 @@
+{
+  "1": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "reshoot_source_pilot.mp4",
+      "force_rate": 24,
+      "frame_load_cap": 97
+    },
+    "_meta": {
+      "title": "Load Source Video to Re-Shoot"
+    }
+  },
+  "2": {
+    "class_type": "LoadDA3Model",
+    "inputs": {
+      "model_name": "depth_anything_v3_vitl_fp16.safetensors",
+      "metric_depth": true
+    },
+    "_meta": {
+      "title": "Load Depth Anything 3 / MoGe Metric Depth Estimator"
+    }
+  },
+  "3": {
+    "class_type": "DA3DepthMap",
+    "inputs": {
+      "da3_model": ["2", 0],
+      "images": ["1", 0],
+      "resolution": 768
+    },
+    "_meta": {
+      "title": "Estimate Temporal Metric Depth Map"
+    }
+  },
+  "4": {
+    "class_type": "OpenHiggsfieldDepthReshoot",
+    "inputs": {
+      "images": ["1", 0],
+      "depth_map": ["3", 0],
+      "rig_preset": "custom_orbit",
+      "start_azimuth_deg": 30.0,
+      "start_elevation_deg": 8.0,
+      "end_azimuth_deg": -15.0,
+      "end_elevation_deg": 0.0,
+      "start_distance": 1.0,
+      "end_distance": 0.92,
+      "fov_deg": 50.0,
+      "parallax_strength": 1.0,
+      "fill_mode": "ltx_magenta_guide",
+      "target_frames": 97,
+      "keyframes_json": "[{\"t\": 0.0, \"azimuth_deg\": 30.0, \"elevation_deg\": 8.0}, {\"t\": 4.4, \"azimuth_deg\": -15.0, \"elevation_deg\": 0.0}]"
+    },
+    "_meta": {
+      "title": "OpenHiggsfield 3D Depth Point-Cloud Re-Projection"
+    }
+  },
+  "5": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 22B Base Model"
+    }
+  },
+  "6": {
+    "class_type": "LTXICLoRALoaderModelOnly",
+    "inputs": {
+      "model": ["5", 0],
+      "lora_name": "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+      "strength_model": 0.95
+    },
+    "_meta": {
+      "title": "Load LTX IC-LoRA Union Control (3D Warp & Disocclusion Fill)"
+    }
+  },
+  "7": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "gemma_4_12B_it_fp8_scaled.safetensors",
+      "type": "ltxv"
+    },
+    "_meta": {
+      "title": "Load Gemma-4 12B Text Encoder"
+    }
+  },
+  "8": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ltx-2.5-vae.safetensors"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 Video VAE"
+    }
+  },
+  "9": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "Cinematic sci-fi shot of a female pilot in a purple visor helmet with a massive burning capital spaceship exploding in the clouds behind her, smooth 3D orbital camera pan from 30 degrees right to -15 degrees left revealing the battle cruiser, ultra-detailed 4K VFX.",
+      "clip": ["7", 0]
+    },
+    "_meta": {
+      "title": "Re-Shoot Camera Trajectory Prompt"
+    }
+  },
+  "10": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "magenta borders, stretched pixels, tearing, artifacts, blurry, static camera",
+      "clip": ["7", 0]
+    },
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "11": {
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "inputs": {
+      "positive": ["9", 0],
+      "negative": ["10", 0],
+      "vae": ["8", 0],
+      "guide_video": ["4", 0],
+      "disocclusion_mask": ["4", 1],
+      "guide_strength": 0.88
+    },
+    "_meta": {
+      "title": "Inject 3D Warped Video & Magenta Disocclusion Guide"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "model": ["6", 0],
+      "positive": ["11", 0],
+      "negative": ["11", 1],
+      "latent_image": ["11", 2],
+      "seed": 10802026,
+      "steps": 22,
+      "cfg": 3.2,
+      "sampler_name": "euler",
+      "scheduler": "ltxv_shifted"
+    },
+    "_meta": {
+      "title": "Sample 3D Re-Shot Video with Outpainted Disocclusions"
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["12", 0],
+      "vae": ["8", 0]
+    },
+    "_meta": {
+      "title": "Decode Re-Shot Video Frames"
+    }
+  },
+  "14": {
+    "class_type": "OpenHiggsfieldViralWipe",
+    "inputs": {
+      "source_images": ["1", 0],
+      "result_images": ["13", 0],
+      "guide_images": ["4", 2],
+      "wipe_mode": "oscillate_sweep",
+      "left_label": "Source",
+      "right_label": "Result"
+    },
+    "_meta": {
+      "title": "Render Source vs Result Neon-Yellow Comparison Wipe"
+    }
+  },
+  "15": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["13", 0],
+      "filename_prefix": "OpenHiggsfield_Reshoot_Result",
+      "fps": 24.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save Re-Shot Result Video"
+    }
+  },
+  "16": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["14", 0],
+      "filename_prefix": "OpenHiggsfield_Reshoot_ViralWipe",
+      "fps": 24.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save Viral Comparison Wipe Video"
+    }
+  }
+}

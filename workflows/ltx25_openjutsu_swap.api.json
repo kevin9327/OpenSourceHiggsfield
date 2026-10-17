@@ -1,0 +1,162 @@
+{
+  "1": {
+    "class_type": "LoadVideo",
+    "inputs": {
+      "file": "rap-original.mp4",
+      "force_rate": 24,
+      "frame_load_cap": 97
+    },
+    "_meta": {
+      "title": "Load Source Performance Video (rap-original.mp4)"
+    }
+  },
+  "2": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "character_grandma.png"
+    },
+    "_meta": {
+      "title": "Load New Character Sheet / Full-Body Reference"
+    }
+  },
+  "3": {
+    "class_type": "OpenHiggsfieldJutsuVFX",
+    "inputs": {
+      "source_video": ["1", 0],
+      "character_image": ["2", 0],
+      "who_to_replace": "the guy in the left",
+      "jutsu_style": "seamless_character_swap",
+      "vfx_intensity": 0.65
+    },
+    "_meta": {
+      "title": "OpenHiggsfield OpenJutsu Target Isolation & VFX Matte"
+    }
+  },
+  "4": {
+    "class_type": "UNETLoader",
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-dev-fp8.safetensors",
+      "weight_dtype": "fp8_e4m3fn"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 22B Base Model"
+    }
+  },
+  "5": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["4", 0],
+      "lora_name": "ltx-2.5-22b-ic-lora-ingredients-0.9.safetensors",
+      "strength_model": 0.95
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 IC-LoRA Ingredients (Character Identity Injection)"
+    }
+  },
+  "6": {
+    "class_type": "LoraLoaderModelOnly",
+    "inputs": {
+      "model": ["5", 0],
+      "lora_name": "ltx-2.5-22b-ic-lora-alpha-gen-0.9.safetensors",
+      "strength_model": 0.85
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 IC-LoRA Alpha-Gen (Matte-Guided Composite)"
+    }
+  },
+  "7": {
+    "class_type": "CLIPLoader",
+    "inputs": {
+      "clip_name": "gemma_4_12B_it_fp8_scaled.safetensors",
+      "type": "ltxv"
+    },
+    "_meta": {
+      "title": "Load Gemma-4 12B Text Encoder"
+    }
+  },
+  "8": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "ltx-2.5-vae.safetensors"
+    },
+    "_meta": {
+      "title": "Load LTX-2.5 Video VAE"
+    }
+  },
+  "9": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "Replace the guy in the left with the elderly grandma in the teal velvet tracksuit and glasses, rapping into the hanging studio condenser microphone with expressive lip-sync and hand gestures next to the man in the black Comfy shirt against the warm orange studio backdrop.",
+      "clip": ["7", 0]
+    },
+    "_meta": {
+      "title": "Character Swap Prompt"
+    }
+  },
+  "10": {
+    "class_type": "LTXVSetAudioRefTokens",
+    "inputs": {
+      "conditioning": ["9", 0],
+      "source_audio": ["1", 1],
+      "sync_weight": 1.0
+    },
+    "_meta": {
+      "title": "Preserve Original Audio & Lip-Sync Reference Tokens"
+    }
+  },
+  "11": {
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "inputs": {
+      "positive": ["10", 0],
+      "negative": ["9", 0],
+      "vae": ["8", 0],
+      "guide_video": ["3", 0],
+      "disocclusion_mask": ["3", 1],
+      "reference_image": ["2", 0],
+      "guide_strength": 0.90
+    },
+    "_meta": {
+      "title": "Condition on OpenJutsu Character Reference & Alpha Matte"
+    }
+  },
+  "12": {
+    "class_type": "SamplerCustomAdvanced",
+    "inputs": {
+      "model": ["6", 0],
+      "positive": ["11", 0],
+      "negative": ["11", 1],
+      "latent_image": ["11", 2],
+      "seed": 20261030,
+      "steps": 20,
+      "cfg": 3.2,
+      "sampler_name": "euler",
+      "scheduler": "ltxv_shifted"
+    },
+    "_meta": {
+      "title": "Sample OpenJutsu Character-Swapped Video"
+    }
+  },
+  "13": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["12", 0],
+      "vae": ["8", 0]
+    },
+    "_meta": {
+      "title": "Decode Swapped Video"
+    }
+  },
+  "14": {
+    "class_type": "SaveVideo",
+    "inputs": {
+      "images": ["13", 0],
+      "audio": ["1", 1],
+      "filename_prefix": "OpenHiggsfield_OpenJutsu_Swap",
+      "fps": 24.0,
+      "format": "video/h264-mp4"
+    },
+    "_meta": {
+      "title": "Save Swapped Video with Original Studio Audio"
+    }
+  }
+}

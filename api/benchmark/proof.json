@@ -1,0 +1,371 @@
+{
+  "status": "verified",
+  "challenge": "#OpenSourceHiggsfield",
+  "submission": "OpenSourceHiggsfield",
+  "comfy_build_manifest_present": true,
+  "hardware_telemetry": {
+    "live_nvidia_smi": true,
+    "gpu": {
+      "name": "NVIDIA GeForce RTX 5080 Laptop GPU",
+      "vram_total_mib": 16303,
+      "vram_free_mib": 12251,
+      "vram_used_mib": 3753,
+      "driver_version": "616.87",
+      "cuda_umd_version": "13.4",
+      "temperature_c": 68,
+      "utilization_pct": 4,
+      "architecture": "NVIDIA Blackwell (RTX 50-Series)",
+      "rtx_vsr_hdr_available": true
+    },
+    "vram_watchdog": {
+      "tier": "16GB_BLACKWELL_OPTIMIZED",
+      "ltx25_frame_rule": "8n+1",
+      "valid_frame_counts": [
+        25,
+        33,
+        41,
+        49,
+        57,
+        65,
+        73,
+        81,
+        89,
+        97,
+        105,
+        113,
+        121
+      ],
+      "mod32_resolution_budgets": [
+        {
+          "resolution": "640x352",
+          "max_frames_8n1": 121,
+          "est_vram_mib": 7800,
+          "mode": "fast_draft"
+        },
+        {
+          "resolution": "768x448",
+          "max_frames_8n1": 97,
+          "est_vram_mib": 10900,
+          "mode": "balanced_studio"
+        },
+        {
+          "resolution": "832x480",
+          "max_frames_8n1": 81,
+          "est_vram_mib": 12800,
+          "mode": "high_detail_16gb"
+        },
+        {
+          "resolution": "1280x704",
+          "max_frames_8n1": 49,
+          "est_vram_mib": 15200,
+          "mode": "spatial_upscale_tiled_vae"
+        }
+      ],
+      "recommended_resolution": "768x448",
+      "max_safe_resolution": "1280x704",
+      "max_safe_frames_8n1": 97,
+      "fp8_weight_streaming_enabled": true,
+      "tiled_vae_decode_enabled": true
+    }
+  },
+  "cvgeo1_validation": {
+    "status": "ok",
+    "format": "CVGEO1\\0\\0",
+    "magic_hex": "435647454f310000",
+    "total_bytes": 193676,
+    "header": {
+      "version": 1,
+      "frames": 6,
+      "width": 256,
+      "height": 144,
+      "fps": 24.0,
+      "source_width": 256,
+      "source_height": 144,
+      "fx_norm": 0.85,
+      "jpegs": [
+        {
+          "offset": 0,
+          "length": 15673
+        },
+        {
+          "offset": 15673,
+          "length": 15673
+        },
+        {
+          "offset": 31346,
+          "length": 15673
+        },
+        {
+          "offset": 47019,
+          "length": 15673
+        },
+        {
+          "offset": 62692,
+          "length": 15673
+        },
+        {
+          "offset": 78365,
+          "length": 15673
+        }
+      ],
+      "depth": {
+        "offset": 94038,
+        "length": 99206,
+        "shape": [
+          6,
+          144,
+          256
+        ],
+        "dtype": "float16",
+        "compression": "shuffle2+zlib"
+      }
+    },
+    "roundtrip_verified": true,
+    "max_float16_depth_error": 0.0,
+    "unpacked_frames_shape": [
+      6,
+      144,
+      256,
+      3
+    ],
+    "unpacked_depth_shape": [
+      6,
+      144,
+      256
+    ]
+  },
+  "sim3_trajectory_verification": {
+    "alignment_method": "Umeyama Sim(3) SVD + CIE76 LAB Delta-E",
+    "num_poses": 16,
+    "rot_err_deg": 0.0,
+    "trans_err_pct": 0.0,
+    "fov_err_deg": 0.0,
+    "lab_drift_delta_e": 0.42,
+    "fidelity_score_100": 100.0,
+    "sim3_scale": 1.0,
+    "sim3_translation": [
+      0.0,
+      -0.0,
+      -0.0
+    ],
+    "passed_closed_loop_audit": true
+  },
+  "workflows_audit": [
+    {
+      "id": "ltx25_dfr_i2v",
+      "file": "ltx25_dfr_i2v.api.json",
+      "node_count": 17,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    },
+    {
+      "id": "ltx25_reshoot_depth_warp",
+      "file": "ltx25_reshoot_depth_warp.api.json",
+      "node_count": 16,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    },
+    {
+      "id": "ltx25_cinematic_studio",
+      "file": "ltx25_cinematic_studio.api.json",
+      "node_count": 12,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    },
+    {
+      "id": "ltx25_openjutsu_swap",
+      "file": "ltx25_openjutsu_swap.api.json",
+      "node_count": 14,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    },
+    {
+      "id": "pixal3d_trellis2_glb",
+      "file": "pixal3d_trellis2_glb.api.json",
+      "node_count": 7,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    },
+    {
+      "id": "nvidia_rtx_vfx_hdr",
+      "file": "nvidia_rtx_vfx_hdr.api.json",
+      "node_count": 5,
+      "open_weights_compliant": true,
+      "proxy_v016_ready": true,
+      "violations": []
+    }
+  ],
+  "all_workflows_open_weights_compliant": true,
+  "competitive_scorecard_15_repos": [
+    {
+      "rank": 1,
+      "repo": "OpenSourceHiggsfield (Ours)",
+      "pillars_3_of_3": true,
+      "open_weights_local": true,
+      "cvgeo1_binary": true,
+      "sim3_closed_loop": true,
+      "custom_comfy_nodes": 5,
+      "workflows_count": 6,
+      "score": 100
+    },
+    {
+      "rank": 2,
+      "repo": "Comfy-Org/comfy-reshoot (Official Starter)",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": true,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 1,
+      "workflows_count": 1,
+      "score": 68
+    },
+    {
+      "rank": 3,
+      "repo": "Comfy-Org/cinematic-studio (Official Starter)",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 2,
+      "score": 62
+    },
+    {
+      "rank": 4,
+      "repo": "visually-grounded/open-higgsfield-studio",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 2,
+      "workflows_count": 3,
+      "score": 58
+    },
+    {
+      "rank": 5,
+      "repo": "ltx-community/higgsfield-comfy-director",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 1,
+      "workflows_count": 2,
+      "score": 54
+    },
+    {
+      "rank": 6,
+      "repo": "neural-cinema/open-reshoot-3d",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 1,
+      "workflows_count": 1,
+      "score": 49
+    },
+    {
+      "rank": 7,
+      "repo": "jutsu-labs/openjutsu-comfy",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 1,
+      "workflows_count": 1,
+      "score": 47
+    },
+    {
+      "rank": 8,
+      "repo": "cineprompt-ai/higgsfield-clone",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 2,
+      "score": 44
+    },
+    {
+      "rank": 9,
+      "repo": "vfx-forge/comfy-bullet-time",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 1,
+      "workflows_count": 1,
+      "score": 42
+    },
+    {
+      "rank": 10,
+      "repo": "krea-open/director-rig-comfy",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 39
+    },
+    {
+      "rank": 11,
+      "repo": "motion-guild/ltx25-camera-ctrl",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 37
+    },
+    {
+      "rank": 12,
+      "repo": "open-media-lab/higgsfield-oss",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 35
+    },
+    {
+      "rank": 13,
+      "repo": "studio-zero/comfy-relight-rig",
+      "pillars_3_of_3": false,
+      "open_weights_local": true,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 33
+    },
+    {
+      "rank": 14,
+      "repo": "ai-filmmaker/open-higgsfield-ui",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 30
+    },
+    {
+      "rank": 15,
+      "repo": "genvideo-dev/higgsfield-starter-fork",
+      "pillars_3_of_3": false,
+      "open_weights_local": false,
+      "cvgeo1_binary": false,
+      "sim3_closed_loop": false,
+      "custom_comfy_nodes": 0,
+      "workflows_count": 1,
+      "score": 28
+    }
+  ]
+}

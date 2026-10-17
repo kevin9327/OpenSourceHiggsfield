@@ -1,0 +1,170 @@
+{
+  "status": "online",
+  "app_name": "OpenSourceHiggsfield Director Studio",
+  "challenge_tag": "#OpenSourceHiggsfield",
+  "execution_mode": "OPEN_WEIGHTS_LOCAL",
+  "grand_prize_eligible": true,
+  "open_weights_enforced": true,
+  "gpu": {
+    "name": "NVIDIA GeForce RTX 5080 Laptop GPU",
+    "vram_total_mib": 16303,
+    "vram_free_mib": 12251,
+    "vram_used_mib": 3753,
+    "driver_version": "616.87",
+    "cuda_umd_version": "13.4",
+    "temperature_c": 68,
+    "utilization_pct": 3,
+    "architecture": "NVIDIA Blackwell (RTX 50-Series)",
+    "rtx_vsr_hdr_available": true
+  },
+  "vram_watchdog": {
+    "tier": "16GB_BLACKWELL_OPTIMIZED",
+    "ltx25_frame_rule": "8n+1",
+    "valid_frame_counts": [
+      25,
+      33,
+      41,
+      49,
+      57,
+      65,
+      73,
+      81,
+      89,
+      97,
+      105,
+      113,
+      121
+    ],
+    "mod32_resolution_budgets": [
+      {
+        "resolution": "640x352",
+        "max_frames_8n1": 121,
+        "est_vram_mib": 7800,
+        "mode": "fast_draft"
+      },
+      {
+        "resolution": "768x448",
+        "max_frames_8n1": 97,
+        "est_vram_mib": 10900,
+        "mode": "balanced_studio"
+      },
+      {
+        "resolution": "832x480",
+        "max_frames_8n1": 81,
+        "est_vram_mib": 12800,
+        "mode": "high_detail_16gb"
+      },
+      {
+        "resolution": "1280x704",
+        "max_frames_8n1": 49,
+        "est_vram_mib": 15200,
+        "mode": "spatial_upscale_tiled_vae"
+      }
+    ],
+    "recommended_resolution": "768x448",
+    "max_safe_resolution": "1280x704",
+    "max_safe_frames_8n1": 97,
+    "fp8_weight_streaming_enabled": true,
+    "tiled_vae_decode_enabled": true
+  },
+  "sdk": {
+    "package": "comfy-sdk",
+    "version": "0.5.0",
+    "proxy_package": "comfy-api-proxy",
+    "proxy_version": "0.1.6",
+    "active_base_url": "http://127.0.0.1:8189",
+    "router_base_url": "https://api.comfy.org",
+    "ffmpeg_binary": "C:\\Users\\swsz9\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\site-packages\\imageio_ffmpeg\\binaries\\ffmpeg-win-x86_64-v7.1.exe"
+  },
+  "custom_nodes_loaded": [
+    "OpenHiggsfieldCameraRig",
+    "OpenHiggsfieldDepthReshoot",
+    "OpenHiggsfieldRelightGrade",
+    "OpenHiggsfieldJutsuVFX",
+    "OpenHiggsfieldViralWipe"
+  ],
+  "workflows": [
+    {
+      "id": "ltx25_dfr_i2v",
+      "file": "ltx25_dfr_i2v.api.json",
+      "name": "LTX-2.5 3-Stage DFR Image-to-Video + 6-DOF Camera Rig",
+      "studio_tab": "cinematic-studio",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors",
+        "ltx-2.5-vae.safetensors",
+        "ltx-2.5-audio-vae.safetensors",
+        "ltx-2.5-22b-ic-lora-pixel-spatial-upscaler-x2-1.0.safetensors"
+      ]
+    },
+    {
+      "id": "ltx25_reshoot_depth_warp",
+      "file": "ltx25_reshoot_depth_warp.api.json",
+      "name": "Re-Shoot a Video: 3D Depth Point-Cloud Warp + LTX-2.5 IC-LoRA Union Control",
+      "studio_tab": "reshoot",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "depth_anything_v3_vitl_fp16.safetensors",
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors"
+      ]
+    },
+    {
+      "id": "ltx25_cinematic_studio",
+      "file": "ltx25_cinematic_studio.api.json",
+      "name": "Cinematic Studio: FLUX.3 Klein + 3D Normal Relight & Film Grade + LTX-2.5",
+      "studio_tab": "cinematic-studio",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "flux3-image-klein-int8-convrot.safetensors",
+        "t5xxl_fp8_e4m3fn_scaled.safetensors",
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors"
+      ]
+    },
+    {
+      "id": "ltx25_openjutsu_swap",
+      "file": "ltx25_openjutsu_swap.api.json",
+      "name": "OpenJutsu: Single-Image Video Character Swap + Audio Sync & VFX Mattes",
+      "studio_tab": "openjutsu",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.5-22b-ic-lora-ingredients-0.9.safetensors",
+        "ltx-2.5-22b-ic-lora-alpha-gen-0.9.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors"
+      ]
+    },
+    {
+      "id": "pixal3d_trellis2_glb",
+      "file": "pixal3d_trellis2_glb.api.json",
+      "name": "Pixal3D / TRELLIS-2: Open-Weights Image-to-3D PBR GLB Set Builder",
+      "studio_tab": "3d-set-lab",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "TRELLIS-image-large-fp16.safetensors",
+        "dinov2_vitl14_reg.safetensors"
+      ]
+    },
+    {
+      "id": "nvidia_rtx_vfx_hdr",
+      "file": "nvidia_rtx_vfx_hdr.api.json",
+      "name": "NVIDIA RTX 5080/5090 VSR 4K Upscale + 48fps FrameGen + TrueHDR Mastering",
+      "studio_tab": "rtx-mastering",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "NVIDIA RTX Video Super Resolution Tensor Cores",
+        "NVIDIA Optical Flow Frame Generation",
+        "NVIDIA TrueHDR"
+      ]
+    }
+  ]
+}

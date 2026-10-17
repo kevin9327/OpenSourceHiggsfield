@@ -1,0 +1,66 @@
+{
+  "status": "ok",
+  "format": "CVGEO1\\0\\0",
+  "magic_hex": "435647454f310000",
+  "total_bytes": 272326,
+  "header": {
+    "version": 1,
+    "frames": 6,
+    "width": 320,
+    "height": 192,
+    "fps": 24.0,
+    "source_width": 320,
+    "source_height": 192,
+    "fx_norm": 0.85,
+    "jpegs": [
+      {
+        "offset": 0,
+        "length": 21724
+      },
+      {
+        "offset": 21724,
+        "length": 21724
+      },
+      {
+        "offset": 43448,
+        "length": 21724
+      },
+      {
+        "offset": 65172,
+        "length": 21724
+      },
+      {
+        "offset": 86896,
+        "length": 21724
+      },
+      {
+        "offset": 108620,
+        "length": 21724
+      }
+    ],
+    "depth": {
+      "offset": 130344,
+      "length": 141547,
+      "shape": [
+        6,
+        192,
+        320
+      ],
+      "dtype": "float16",
+      "compression": "shuffle2+zlib"
+    }
+  },
+  "roundtrip_verified": true,
+  "max_float16_depth_error": 0.0,
+  "unpacked_frames_shape": [
+    6,
+    192,
+    320,
+    3
+  ],
+  "unpacked_depth_shape": [
+    6,
+    192,
+    320
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "protocolVersion": "2024-11-05",
+  "serverInfo": {
+    "name": "openhiggsfield-comfy-mcp",
+    "version": "1.1.0",
+    "description": "OpenSourceHiggsfield 3-in-1 AI Cinema Director Studio MCP Server (Comfy MCP + Comfy Local Agent + Comfy SDK v0.5.0 + Comfy API Proxy v0.1.6)"
+  },
+  "tools": [
+    {
+      "name": "generate_cinematic_shot",
+      "description": "Pillar 1 (Cinematic Studio): Direct and render a 2K cinema shot or LTX-2.5 video with 6-axis optical controls (camera sensor/anamorphic lens, framing, 3D surface-normal relighting, film stock halation, and ACEScg/Kodachrome/Teal-and-Orange print LUT).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "Scene description prompt.",
+            "default": "A man with a python over his shoulders stands in a glass conservatory at night."
+          },
+          "camera_type": {
+            "type": "string",
+            "enum": [
+              "large_format_anamorphic",
+              "super35_spherical",
+              "imax_65mm",
+              "handheld_16mm"
+            ],
+            "default": "large_format_anamorphic"
+          },
+          "framing": {
+            "type": "string",
+            "enum": [
+              "medium",
+              "low_angle",
+              "close_up",
+              "wide_establishing",
+              "dutch_tilt"
+            ],
+            "default": "low_angle"
+          },
+          "light_preset": {
+            "type": "string",
+            "enum": [
+              "blue_hour",
+              "neon",
+              "golden_hour",
+              "chiaroscuro",
+              "volumetric_fog"
+            ],
+            "default": "neon"
+          },
+          "film_stock": {
+            "type": "string",
+            "enum": [
+              "tungsten_500t",
+              "daylight_250d",
+              "kodak_vision3",
+              "bleach_bypass"
+            ],
+            "default": "tungsten_500t"
+          },
+          "color_grade": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "teal_and_orange",
+              "kodachrome",
+              "noir_silver"
+            ],
+            "default": "teal_and_orange"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "image",
+              "video"
+            ],
+            "default": "image"
+          }
+        },
+        "required": [
+          "prompt"
+        ]
+      }
+    },
+    {
+      "name": "reshoot_video_3d",
+      "description": "Pillar 2 (Re-shoot a Video): Unproject video frames into a 3D metric depth point cloud and re-render along a keyframed SE(3) spherical camera rig trajectory with #FF00FF CrossView LoRA disocclusion masking or far-depth inpainting, plus optional Matrix Freeze-Time.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "rig_preset": {
+            "type": "string",
+            "enum": [
+              "custom_orbit",
+              "bullet_time_360",
+              "dolly_zoom_vertigo",
+              "crane_dive",
+              "fpv_drone_bank"
+            ],
+            "default": "custom_orbit"
+          },
+          "start_azimuth_deg": {
+            "type": "number",
+            "default": 30.0
+          },
+          "start_elevation_deg": {
+            "type": "number",
+            "default": 8.0
+          },
+          "end_azimuth_deg": {
+            "type": "number",
+            "default": -15.0
+          },
+          "end_elevation_deg": {
+            "type": "number",
+            "default": 0.0
+          },
+          "fov_deg": {
+            "type": "number",
+            "default": 50.0
+          },
+          "disocclusion_fill_mode": {
+            "type": "string",
+            "enum": [
+              "inpaint_far_depth",
+              "magenta_ff00ff"
+            ],
+            "default": "inpaint_far_depth"
+          },
+          "matrix_freeze_time": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    },
+    {
+      "name": "openjutsu_vfx_swap",
+      "description": "Pillar 3 (OpenJutsu): Replace a target character in a source video with a single reference character image using LTX-2.5 22B IC-LoRA + MiniMax H3 + SAM-3 spatiotemporal matting while preserving original broadcast-normalized (-14 LUFS) audio.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "who_to_replace": {
+            "type": "string",
+            "description": "Natural-language description of the person to replace.",
+            "default": "the guy in the left"
+          },
+          "jutsu_style": {
+            "type": "string",
+            "enum": [
+              "seamless_character_swap",
+              "neon_chakra_aura",
+              "shadow_clone_burst",
+              "fire_ember_cloak",
+              "cyber_glitch_teleport"
+            ],
+            "default": "seamless_character_swap"
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "768p",
+              "480p"
+            ],
+            "default": "768p"
+          },
+          "vfx_intensity": {
+            "type": "number",
+            "default": 0.65
+          }
+        },
+        "required": [
+          "who_to_replace"
+        ]
+      }
+    },
+    {
+      "name": "export_cvgeo1_geometry",
+      "description": "Pack and round-trip verify a Comfy-Org compatible `CVGEO1\\0\\0` binary 3D camera+depth geometry stream (`float16` depth with byte-transpose `shuffle2` + `zlib` lossless compression).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "num_frames": {
+            "type": "integer",
+            "default": 6,
+            "minimum": 1,
+            "maximum": 64
+          },
+          "width": {
+            "type": "integer",
+            "default": 320
+          },
+          "height": {
+            "type": "integer",
+            "default": 192
+          },
+          "fps": {
+            "type": "number",
+            "default": 24.0
+          },
+          "fx_norm": {
+            "type": "number",
+            "default": 0.85
+          }
+        }
+      }
+    },
+    {
+      "name": "verify_sim3_camera_trajectory",
+      "description": "Run closed-loop SVD Umeyama `Sim(3)` 3D camera trajectory alignment and CIE LAB `Delta-E` color consistency verification on a generated camera rig trajectory.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "rig_preset": {
+            "type": "string",
+            "enum": [
+              "custom_orbit",
+              "bullet_time_360",
+              "dolly_zoom_vertigo",
+              "crane_dive",
+              "fpv_drone_bank"
+            ],
+            "default": "custom_orbit"
+          },
+          "frame_count": {
+            "type": "integer",
+            "default": 16
+          },
+          "start_azimuth_deg": {
+            "type": "number",
+            "default": 30.0
+          },
+          "start_elevation_deg": {
+            "type": "number",
+            "default": 8.0
+          },
+          "end_azimuth_deg": {
+            "type": "number",
+            "default": -15.0
+          },
+          "end_elevation_deg": {
+            "type": "number",
+            "default": 0.0
+          },
+          "fov_deg": {
+            "type": "number",
+            "default": 50.0
+          }
+        }
+      }
+    },
+    {
+      "name": "get_hardware_vram_telemetry",
+      "description": "Query live NVIDIA Blackwell GPU VRAM telemetry (`nvidia-smi`) and compute LTX-2.5 `8n+1` temporal frame rules and mod-32 spatial resolution budgets.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

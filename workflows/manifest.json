@@ -1,0 +1,147 @@
+{
+  "schema": "openhiggsfield.workflow_manifest.v1",
+  "challenge": "ComfyUI #OpenSourceHiggsfield Competition",
+  "sdk_version": "comfy-sdk==0.5.0",
+  "proxy_version": "comfy-api-proxy==0.1.6",
+  "workflows": {
+    "ltx25_dfr_i2v": {
+      "file": "ltx25_dfr_i2v.api.json",
+      "name": "LTX-2.5 3-Stage DFR Image-to-Video + 6-DOF Camera Rig",
+      "studio_tab": "cinematic-studio",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors",
+        "ltx-2.5-vae.safetensors",
+        "ltx-2.5-audio-vae.safetensors",
+        "ltx-2.5-22b-ic-lora-pixel-spatial-upscaler-x2-1.0.safetensors"
+      ],
+      "injectable_inputs": {
+        "reference_image": {"node_id": "5", "field": "image"},
+        "prompt": {"node_id": "6", "field": "text"},
+        "negative_prompt": {"node_id": "7", "field": "text"},
+        "rig_preset": {"node_id": "8", "field": "rig_preset"},
+        "start_azimuth_deg": {"node_id": "8", "field": "start_azimuth_deg"},
+        "start_elevation_deg": {"node_id": "8", "field": "start_elevation_deg"},
+        "end_azimuth_deg": {"node_id": "8", "field": "end_azimuth_deg"},
+        "end_elevation_deg": {"node_id": "8", "field": "end_elevation_deg"},
+        "fov_deg": {"node_id": "8", "field": "fov_deg"},
+        "seed": {"node_id": "11", "field": "seed"}
+      },
+      "output_node_id": "17"
+    },
+    "ltx25_reshoot_depth_warp": {
+      "file": "ltx25_reshoot_depth_warp.api.json",
+      "name": "Re-Shoot a Video: 3D Depth Point-Cloud Warp + LTX-2.5 IC-LoRA Union Control",
+      "studio_tab": "reshoot",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "depth_anything_v3_vitl_fp16.safetensors",
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.3-22b-ic-lora-union-control-ref0.5.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors"
+      ],
+      "injectable_inputs": {
+        "source_video": {"node_id": "1", "field": "file"},
+        "rig_preset": {"node_id": "4", "field": "rig_preset"},
+        "start_azimuth_deg": {"node_id": "4", "field": "start_azimuth_deg"},
+        "start_elevation_deg": {"node_id": "4", "field": "start_elevation_deg"},
+        "end_azimuth_deg": {"node_id": "4", "field": "end_azimuth_deg"},
+        "end_elevation_deg": {"node_id": "4", "field": "end_elevation_deg"},
+        "start_distance": {"node_id": "4", "field": "start_distance"},
+        "end_distance": {"node_id": "4", "field": "end_distance"},
+        "fov_deg": {"node_id": "4", "field": "fov_deg"},
+        "keyframes_json": {"node_id": "4", "field": "keyframes_json"},
+        "prompt": {"node_id": "9", "field": "text"},
+        "seed": {"node_id": "12", "field": "seed"}
+      },
+      "output_node_id": "15",
+      "wipe_output_node_id": "16"
+    },
+    "ltx25_cinematic_studio": {
+      "file": "ltx25_cinematic_studio.api.json",
+      "name": "Cinematic Studio: FLUX.3 Klein + 3D Normal Relight & Film Grade + LTX-2.5",
+      "studio_tab": "cinematic-studio",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "flux3-image-klein-int8-convrot.safetensors",
+        "t5xxl_fp8_e4m3fn_scaled.safetensors",
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors"
+      ],
+      "injectable_inputs": {
+        "prompt": {"node_id": "4", "field": "text"},
+        "width": {"node_id": "5", "field": "width"},
+        "height": {"node_id": "5", "field": "height"},
+        "batch_size": {"node_id": "5", "field": "batch_size"},
+        "seed": {"node_id": "6", "field": "seed"},
+        "camera_type": {"node_id": "8", "field": "camera_type"},
+        "framing": {"node_id": "8", "field": "framing"},
+        "light_preset": {"node_id": "8", "field": "light_preset"},
+        "film_stock": {"node_id": "8", "field": "film_stock"},
+        "color_grade": {"node_id": "8", "field": "color_grade"}
+      },
+      "output_node_id": "11"
+    },
+    "ltx25_openjutsu_swap": {
+      "file": "ltx25_openjutsu_swap.api.json",
+      "name": "OpenJutsu: Single-Image Video Character Swap + Audio Sync & VFX Mattes",
+      "studio_tab": "openjutsu",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "ltx-2.5-22b-dev-fp8.safetensors",
+        "ltx-2.5-22b-ic-lora-ingredients-0.9.safetensors",
+        "ltx-2.5-22b-ic-lora-alpha-gen-0.9.safetensors",
+        "gemma_4_12B_it_fp8_scaled.safetensors"
+      ],
+      "injectable_inputs": {
+        "source_video": {"node_id": "1", "field": "file"},
+        "character_image": {"node_id": "2", "field": "image"},
+        "who_to_replace": {"node_id": "3", "field": "who_to_replace"},
+        "jutsu_style": {"node_id": "3", "field": "jutsu_style"},
+        "prompt": {"node_id": "9", "field": "text"},
+        "seed": {"node_id": "12", "field": "seed"}
+      },
+      "output_node_id": "14"
+    },
+    "pixal3d_trellis2_glb": {
+      "file": "pixal3d_trellis2_glb.api.json",
+      "name": "Pixal3D / TRELLIS-2: Open-Weights Image-to-3D PBR GLB Set Builder",
+      "studio_tab": "3d-set-lab",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "TRELLIS-image-large-fp16.safetensors",
+        "dinov2_vitl14_reg.safetensors"
+      ],
+      "injectable_inputs": {
+        "input_image": {"node_id": "1", "field": "image"},
+        "seed": {"node_id": "4", "field": "seed"},
+        "texture_size": {"node_id": "5", "field": "texture_size"}
+      },
+      "output_node_id": "5"
+    },
+    "nvidia_rtx_vfx_hdr": {
+      "file": "nvidia_rtx_vfx_hdr.api.json",
+      "name": "NVIDIA RTX 5080/5090 VSR 4K Upscale + 48fps FrameGen + TrueHDR Mastering",
+      "studio_tab": "rtx-mastering",
+      "open_weights_compliant": true,
+      "grand_prize_eligible": true,
+      "models": [
+        "NVIDIA RTX Video Super Resolution Tensor Cores",
+        "NVIDIA Optical Flow Frame Generation",
+        "NVIDIA TrueHDR"
+      ],
+      "injectable_inputs": {
+        "input_video": {"node_id": "1", "field": "file"},
+        "scale_factor": {"node_id": "2", "field": "scale_factor"},
+        "frame_multiplier": {"node_id": "3", "field": "multiplier"}
+      },
+      "output_node_id": "5"
+    }
+  }
+}
