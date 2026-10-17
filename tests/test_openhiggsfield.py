@@ -401,6 +401,61 @@ class TestOpenHiggsfieldSuite(unittest.TestCase):
         self.assertTrue(jutsu_data["audio_preserved"])
         self.assertIn("trajectory_verification", jutsu_data)
 
+    def test_13_comfy_mcp_server_and_agent_tools(self) -> None:
+        """Verify Comfy MCP Server (JSON-RPC 2.0 initialize/tools/list/tools/call & /api/mcp/* endpoints)."""
+        r_tools = self.client.get("/api/mcp/tools")
+        self.assertEqual(r_tools.status_code, 200)
+        tools_payload = r_tools.json()
+        self.assertEqual(tools_payload["serverInfo"]["name"], "openhiggsfield-comfy-mcp")
+        tool_names = [t["name"] for t in tools_payload["tools"]]
+        self.assertEqual(
+            tool_names,
+            [
+                "generate_cinematic_shot",
+                "reshoot_video_3d",
+                "openjutsu_vfx_swap",
+                "export_cvgeo1_geometry",
+                "verify_sim3_camera_trajectory",
+                "get_hardware_vram_telemetry",
+            ],
+        )
+
+        # Test POST /api/mcp/call for verify_sim3_camera_trajectory & export_cvgeo1_geometry
+        r_sim3 = self.client.post(
+            "/api/mcp/call",
+            json={
+                "name": "verify_sim3_camera_trajectory",
+                "arguments": {"rig_preset": "custom_orbit", "frame_count": 12},
+            },
+        )
+        self.assertEqual(r_sim3.status_code, 200)
+        sim3_res = r_sim3.json()
+        self.assertFalse(sim3_res["isError"])
+        self.assertGreaterEqual(sim3_res["structuredContent"]["fidelity_score_100"], 95.0)
+
+        # Test standard JSON-RPC 2.0 MCP protocol (initialize, tools/list, tools/call) via POST /api/mcp
+        r_init = self.client.post(
+            "/api/mcp",
+            json={"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}},
+        )
+        self.assertEqual(r_init.status_code, 200)
+        self.assertEqual(r_init.json()["result"]["serverInfo"]["name"], "openhiggsfield-comfy-mcp")
+
+        r_rpc_call = self.client.post(
+            "/api/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/call",
+                "params": {"name": "export_cvgeo1_geometry", "arguments": {"num_frames": 4}},
+            },
+        )
+        self.assertEqual(r_rpc_call.status_code, 200)
+        rpc_body = r_rpc_call.json()
+        self.assertEqual(rpc_body["id"], 2)
+        self.assertTrue(rpc_body["result"]["structuredContent"]["roundtrip_verified"])
+
 
 if __name__ == "__main__":
     unittest.main()
+

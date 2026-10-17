@@ -20,6 +20,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response, StreamingRes
 from fastapi.staticfiles import StaticFiles
 
 from .comfy_engine import PUBLIC_DIR, REF_VIDEOS_DIR, ROOT_DIR, WORKFLOWS_DIR, engine
+from .mcp_server import call_mcp_tool, handle_mcp_jsonrpc, list_mcp_tools
 
 FRONTEND_DIR = ROOT_DIR / "frontend"
 
@@ -27,7 +28,7 @@ app = FastAPI(
     title="OpenSourceHiggsfield Director Studio API",
     description=(
         "Open-weights 3-in-1 AI Cinema Studio (Cinematic Studio, 3D Video Re-Shoot, OpenJutsu) "
-        "built on ComfyUI, LTX-2.5 22B, FLUX.3, comfy-sdk v0.5.0, and comfy-api-proxy v0.1.6."
+        "built on ComfyUI, LTX-2.5 22B, FLUX.3, comfy-sdk v0.5.0, comfy-api-proxy v0.1.6, and Comfy MCP."
     ),
     version="1.1.0",
 )
@@ -214,6 +215,38 @@ async def execute_workflow_by_name(
     if "openjutsu" in clean:
         return await engine.run_openjutsu_generate(payload)
     return await engine.run_cinematic_studio(payload)
+
+
+# ---------------------------------------------------------------------------
+# Comfy MCP & Comfy Local Agent Endpoints (`/api/mcp/tools`, `/api/mcp/call`, `/api/mcp`)
+# ---------------------------------------------------------------------------
+
+@app.get("/api/mcp/tools")
+async def mcp_list_tools() -> dict[str, Any]:
+    """Return the Model Context Protocol (MCP) 6-tool catalog for AI Director agents."""
+    return list_mcp_tools()
+
+
+@app.post("/api/mcp/call")
+async def mcp_call_tool(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    """Execute one of the 6 Comfy MCP tools (`name` + `arguments`) over HTTP."""
+    tool_name = str(payload.get("name") or payload.get("tool") or "")
+    arguments = payload.get("arguments") or payload.get("params") or {}
+    if not tool_name:
+        raise HTTPException(status_code=400, detail="Missing 'name' of MCP tool to call.")
+    try:
+        return await call_mcp_tool(tool_name, arguments)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/mcp")
+async def mcp_jsonrpc_endpoint(payload: dict[str, Any] = Body(default_factory=dict)) -> dict[str, Any]:
+    """Handle standard JSON-RPC 2.0 MCP requests (`initialize`, `tools/list`, `tools/call`)."""
+    resp = await handle_mcp_jsonrpc(payload)
+    return resp or {"jsonrpc": "2.0", "id": payload.get("id"), "result": {}}
 
 
 # ---------------------------------------------------------------------------
